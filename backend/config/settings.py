@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+importdj_database_url
 
 from pathlib import Path
 from decouple import config
@@ -24,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ayfs0$3qb_lu_zenex2nvb^&az*!j1ek=t83-h__88^#bs9to8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -90,14 +92,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'meditrack_db',
-        'USER': 'postgres',
-        'PASSWORD': 'MediTrack@2026',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    "default": dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
+    )
 }
 
 
@@ -154,3 +151,9 @@ REST_FRAMEWORK = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'accounts.User'
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
